@@ -8,7 +8,7 @@
  */
 int main(int ac, int *av)
 {
-	char *prompt = "(Eshell) $";
+	char *prompt = "#asus $";
 	char *linptr;
 	size_t n = 0;
 
