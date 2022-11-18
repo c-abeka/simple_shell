@@ -6,62 +6,56 @@
  * @av: arg variables
  * Return: 0 on success
  */
-int main(void)
+int main(int ac __attribute__((unused)), char **av __attribute__((unused)))
 {
-	char *full_cmd = NULL, *copy_cmd = NULL;
-	char *prompt = "#asus $";
-	char *linptr = NULL;
+	char *interface = "CAshell $ ";
+	char *lineptr = NULL, lineptr_copy = NULL;
+	const char *delim = " \n";
 	size_t n = 0;
 	ssize_t chars_read;
+	int i, token_count = 0;
 	char *token;
-	const char *delimeter = " \n";
-	char **av;
-	int i = 0;
-	int count_tokens = 0;
 
-	/*print prompt*/
-	printf("%s", prompt);
-	chars_read = getline(&linptr, &n, stdin);
+	while (1)
+	{
+		printf("%s", interface);
+		chars_read = getline(&lineptr, &n, stdin);
+		lineptr_copy = malloc(sizeof(char) * chars_read);
+		if (lineptr_copy == NULL)
+		{
+			perror(": : memory allocation error");
+			return (-1);
+		}
+		strcpy(lineptr_copy, lineptr);
 
-	copy_cmd = malloc(sizeof(char) * chars_read);
-	if (copy_cmd == NULL)
-	{
-		perror("Memory allocation fault");
-		return (-1);
-	}
-	strcpy(copy_cmd, full_cmd);
-
-	if (chars_read == -1)
-	{
-		printf("Closing shell....\n");
-		return (-1);
-	}
-	else
-	{
-		token = strtok(full_cmd, delimeter);
+		token = strtok(lineptr_copy, lineptr);
 
 		while (token)
 		{
-			count_tokens++;
-			token = strtok(NULL, delimeter);
+			token_count++;
+			token = strtok(NULL, delim);
 		}
-		count_tokens++;
-		for (i = 0; token; i++)
+		token_count++;
+
+		av = malloc(sizeof(char *) * token_count)
+
+			token = strtok(lineptr_copy, delim);
+
+		for (i = 0; token != NULL; i++)
 		{
-			/* code */
-			av = malloc(sizeof(char *) * count_tokens);
-			strcpy(av[i], token);
+			argv[i] = malloc(sizeof(char) * strlen(token));
+			strcpy(av[i], token)
+				token = strtok(NULL, delim);
 
-			token = strtok(NULL, delimeter);
+			if (chars_read == -1)
+			{
+				printf("Terminating shell....\n");
+				return (-1);
+			}
+			printf("%s\n", lineptr);
+
+			free(lineptr);
 		}
 
-		av[i] = NULL;
-
-		free(linptr);
-		free(av);
-		free(full_cmd);
-		free(copy_cmd);
+		return (0);
 	}
-
-	return (0);
-}
