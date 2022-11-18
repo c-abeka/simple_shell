@@ -6,10 +6,10 @@
  * @av: arg variables
  * Return: 0 on success
  */
-int main(int ac __attribute__((unused)), char **av __attribute__((unused)))
+int main(int ac __attribute__((unused)), char **av)
 {
 	char *interface = "CAshell $ ";
-	char *lineptr = NULL, lineptr_copy = NULL;
+	char *lineptr = NULL, *lineptr_copy = NULL;
 	const char *delim = " \n";
 	size_t n = 0;
 	ssize_t chars_read;
@@ -21,6 +21,13 @@ int main(int ac __attribute__((unused)), char **av __attribute__((unused)))
 		printf("%s", interface);
 		chars_read = getline(&lineptr, &n, stdin);
 		lineptr_copy = malloc(sizeof(char) * chars_read);
+
+		if (chars_read == -1)
+		{
+			printf("Terminating shell....\n");
+			return (-1);
+		}
+
 		if (lineptr_copy == NULL)
 		{
 			perror(": : memory allocation error");
@@ -37,25 +44,22 @@ int main(int ac __attribute__((unused)), char **av __attribute__((unused)))
 		}
 		token_count++;
 
-		av = malloc(sizeof(char *) * token_count)
+		av = malloc(sizeof(char *) * token_count);
 
-			token = strtok(lineptr_copy, delim);
+		token = strtok(lineptr_copy, delim);
 
 		for (i = 0; token != NULL; i++)
 		{
-			argv[i] = malloc(sizeof(char) * strlen(token));
-			strcpy(av[i], token)
-				token = strtok(NULL, delim);
-
-			if (chars_read == -1)
-			{
-				printf("Terminating shell....\n");
-				return (-1);
-			}
-			printf("%s\n", lineptr);
-
-			free(lineptr);
+			av[i] = malloc(sizeof(char) * strlen(token));
+			strcpy(av[i], token);
+			token = strtok(NULL, delim);
 		}
+		av[i] = NULL;
 
-		return (0);
+		printf("%s\n", lineptr);
+
+		free(lineptr);
 	}
+
+	return (0);
+}
